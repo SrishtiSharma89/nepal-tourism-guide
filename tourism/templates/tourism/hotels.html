@@ -1,0 +1,115 @@
+{% extends 'tourism/base.html' %}
+
+{% block title %}
+Hotels - Explore Nepal
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold">
+                🏨 Hotels in Nepal
+            </h1>
+
+            <p class="text-muted">
+                Find accommodation near popular destinations.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            {% for hotel in hotels %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    {% if hotel.image %}
+
+                    <img
+                        src="{{ hotel.image.url }}"
+                        class="card-img-top"
+                        style="height: 220px; object-fit: cover;"
+                        alt="{{ hotel.name }}"
+                    >
+
+                    {% endif %}
+
+
+                    <div class="card-body">
+
+                        <h4 class="fw-bold">
+                            🏨 {{ hotel.name }}
+                        </h4>
+
+                        <p class="text-muted">
+                            📍 {{ hotel.district.name }}
+                        </p>
+
+                        {% if hotel.destination %}
+
+                        <p>
+                            <strong>Near:</strong>
+                            {{ hotel.destination.name }}
+                        </p>
+
+                        {% endif %}
+
+                        <p>
+                            {{ hotel.description }}
+                        </p>
+
+                        <p>
+                            <strong>💰 Price:</strong>
+                            {{ hotel.price_range }}
+                        </p>
+
+                        <p>
+                            <strong>📞 Phone:</strong>
+                            {{ hotel.phone }}
+                        </p>
+
+                        <a
+                            href="https://www.google.com/maps/search/?api=1&query={{ hotel.latitude }},{{ hotel.longitude }}"
+                            target="_blank"
+                            class="btn btn-success"
+                        >
+                            🗺️ View on Map
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="text-center">
+
+                <h4>
+                    No hotels available yet.
+                </h4>
+
+                <p class="text-muted">
+                    Hotels will be added soon.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

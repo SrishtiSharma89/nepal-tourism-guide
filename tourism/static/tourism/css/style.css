@@ -1,0 +1,229 @@
+General
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8faf9;
+    color: #333;
+}
+
+
+/* Navbar */
+
+.navbar {
+    padding: 15px 0;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+}
+
+
+/* Hero Section */
+
+.hero-section {
+    background: linear-gradient(
+        rgba(0, 80, 50, 0.75),
+        rgba(0, 80, 50, 0.75)
+    ),
+    url("https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=80");
+
+    background-size: cover;
+    background-position: center;
+
+    min-height: 500px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+}
+
+
+/* Cards */
+
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12) !important;
+}
+
+
+/* Buttons */
+
+.btn {
+    border-radius: 8px;
+}
+
+
+/* Section headings */
+
+section h1,
+section h2 {
+    color: #14532d;
+}
+
+
+/* Map */
+
+#map {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+
+/* Footer */
+
+footer {
+    margin-top: 60px;
+}
+
+.destination-hero {
+    position: relative;
+    height: 450px;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.destination-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.destination-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 60px 40px 35px;
+    background: linear-gradient(
+        transparent,
+        rgba(0, 0, 0, 0.75)
+    );
+    color: white;
+}
+
+.destination-hero-overlay h1 {
+    color: white;
+    font-size: 2.8rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.destination-hero-overlay p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.destination-no-image {
+    height: 300px;
+    background: #e9f5ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+}
+
+.destination-no-image h1 {
+    color: #14532d;
+}
+
+.destination-info-card h3 {
+    color: #14532d;
+    font-weight: bold;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e7eb;
+    gap: 20px;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item span {
+    color: #6b7280;
+}
+
+.info-item strong {
+    text-align: right;
+    color: #333;
+}
+
+.hotel-card {
+    overflow: hidden;
+}
+
+.hotel-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.hotel-card .card-title {
+    color: #14532d;
+}
+
+.hotel-details {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.hotel-details p {
+    margin-bottom: 8px;
+}
+
+.route-card {
+    border-top: 4px solid #198754;
+}
+
+.route-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-weight: bold;
+}
+
+.route-location {
+    color: #14532d;
+}
+
+.route-arrow {
+    color: #198754;
+    font-size: 1.3rem;
+}
+
+.route-detail {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.route-detail span {
+    color: #6b7280;
+}
+
+.route-detail strong {
+    text-align: right;
+}
+
+.route-description {
+    margin-top: 20px;
+    color: #6b7280;
+}

@@ -1,0 +1,101 @@
+{% extends 'tourism/base.html' %}
+
+{% block title %}
+My Favorites - Explore Nepal
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold">
+                ❤️ My Favorite Destinations
+            </h1>
+
+            <p class="text-muted">
+                Destinations you have saved for your Nepal trip.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            {% for favorite in favorites %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    {% if favorite.destination.image %}
+
+                    <img
+                        src="{{ favorite.destination.image.url }}"
+                        class="card-img-top"
+                        style="height: 220px; object-fit: cover;"
+                        alt="{{ favorite.destination.name }}"
+                    >
+
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <h4 class="fw-bold">
+                            📍 {{ favorite.destination.name }}
+                        </h4>
+
+                        <p class="text-muted">
+                            {{ favorite.destination.district.name }}
+                        </p>
+
+                        <p>
+                            {{ favorite.destination.description }}
+                        </p>
+
+                        <a
+                            href="{% url 'destination_detail' favorite.destination.id %}"
+                            class="btn btn-success"
+                        >
+                            View Destination
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="text-center">
+
+                <h4>
+                    You haven't saved any destinations yet. ❤️
+                </h4>
+
+                <p class="text-muted">
+                    Explore Nepal and save the places you want to visit.
+                </p>
+
+                <a
+                    href="{% url 'districts' %}"
+                    class="btn btn-success"
+                >
+                    Explore Destinations
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

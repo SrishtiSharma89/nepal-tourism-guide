@@ -1,0 +1,57 @@
+{% extends 'tourism/base.html' %}
+
+{% block title %}
+Login - Explore Nepal
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <h2 class="text-center mb-4">
+                        🔐 Login
+                    </h2>
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        {{ form.as_p }}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100"
+                        >
+                            Login
+                        </button>
+                        <p class="text-center mt-4 mb-0">
+
+                            Don't have an account?
+
+                            <a href="{% url 'signup' %}">
+                                Sign Up here
+                            </a>
+
+                        </p>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

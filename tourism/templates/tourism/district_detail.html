@@ -1,0 +1,103 @@
+{% extends 'tourism/base.html' %}
+
+{% block title %}
+{{ district.name }} - Explore Nepal
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <!-- District Header -->
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold">
+                🏔️ {{ district.name }}
+            </h1>
+
+            <p class="text-success fw-semibold">
+                {{ district.province }}
+            </p>
+
+            <p class="text-muted">
+                {{ district.description }}
+            </p>
+
+        </div>
+
+
+        <!-- Destinations -->
+        <h2 class="mb-4">
+            📍 Major Destinations
+        </h2>
+
+        <div class="row g-4">
+
+            {% for destination in destinations %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h3 class="card-title">
+                            {{ destination.name }}
+                        </h3>
+
+                        <p class="card-text text-muted">
+                            {{ destination.description }}
+                        </p>
+
+                        <p>
+                            <strong>Best Time:</strong>
+                            {{ destination.best_time }}
+                        </p>
+
+                        <a
+                            href="{% url 'destination_detail' destination.id %}"
+                            class="btn btn-success"
+                        >
+                            View Details →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="text-center">
+
+                <p class="text-muted">
+                    No destinations available for this district yet.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Back Button -->
+        <div class="mt-5">
+
+            <a
+                href="{% url 'districts' %}"
+                class="btn btn-outline-success"
+            >
+                ← Back to Districts
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

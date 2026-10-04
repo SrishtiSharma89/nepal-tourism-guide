@@ -1,0 +1,364 @@
+{% extends 'tourism/base.html' %}
+
+{% block title %}
+Travel Routes - Explore Nepal
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <!-- Page Heading -->
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold">
+                🗺️ Travel Routes Across Nepal
+            </h1>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+
+                    <h4 class="mb-3">Plan Your Journey</h4>
+
+                    <div class="row g-3">
+
+                        <!-- From -->
+                        <div class="col-md-5">
+                            <label for="fromLocation" class="form-label">
+                                From
+                            </label>
+
+                            <select
+                                id="fromLocation"
+                                class="form-select"
+                            >
+                                <option value="">
+                                    Select starting location
+                                </option>
+
+                                {% for location in from_locations %}
+                                    <option value="{{ location }}">
+                                        {{ location }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- To -->
+                        <div class="col-md-5">
+                            <label for="toLocation" class="form-label">
+                                To
+                            </label>
+
+                            <select
+                                id="toLocation"
+                                class="form-select"
+                                disabled
+                            >
+                                <option value="">
+                                    Select destination
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Button -->
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button
+                                type="button"
+                                id="findRouteBtn"
+                                class="btn btn-primary w-100"
+                                disabled
+                            >
+                                Find Route
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <p class="text-muted">
+                Explore popular travel routes and transportation options
+                between major destinations.
+            </p>
+
+        </div>
+
+
+        <!-- Map -->
+        <div class="card shadow-sm mb-5">
+
+            <div class="card-body p-0">
+
+                <div
+                    id="routeMap"
+                    style="height: 500px; width: 100%;"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Route Cards -->
+        <div class="row g-4">
+
+            {% for route in routes %}
+
+            <div
+                class="card shadow-sm mb-3 route-card"
+                data-from="{{ route.from_location }}"
+                data-to="{{ route.to_location }}"
+            >
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h4 class="fw-bold">
+                            📍 {{ route.from_location }}
+                            →
+                            {{ route.to_location }}
+                        </h4>
+
+                        <hr>
+
+                        <p>
+                            <strong>🚍 Transport:</strong>
+                            {{ route.transport_type }}
+                        </p>
+
+                        <p>
+                            <strong>📏 Distance:</strong>
+                            {{ route.distance }}
+                        </p>
+
+                        <p>
+                            <strong>⏱️ Estimated Time:</strong>
+                            {{ route.estimated_time }}
+                        </p>
+
+                        <p class="text-muted">
+                            {{ route.description }}
+                        </p>
+
+                        <a
+                            href="https://www.google.com/maps/dir/?api=1&origin={{ route.from_latitude }},{{ route.from_longitude }}&destination={{ route.to_latitude }},{{ route.to_longitude }}"
+                            target="_blank"
+                            class="btn btn-success"
+                        >
+                            🗺️ Get Directions
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Leaflet CSS -->
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+
+<!-- Leaflet JS -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+{{ route_data|json_script:"routes-data" }}
+<script>
+    const routeData = JSON.parse(
+        document.getElementById('routes-data').textContent
+    );
+
+    const fromLocation = document.getElementById('fromLocation');
+    const toLocation = document.getElementById('toLocation');
+    const findRouteBtn = document.getElementById('findRouteBtn');
+
+
+    fromLocation.addEventListener('change', function () {
+
+        const selectedFrom = this.value;
+
+        // Reset To dropdown
+        toLocation.innerHTML = `
+            <option value="">
+                Select destination
+            </option>
+        `;
+
+        // Disable To and button if no From selected
+        if (!selectedFrom) {
+
+            toLocation.disabled = true;
+            findRouteBtn.disabled = true;
+
+            return;
+        }
+
+
+        // Find routes starting from selected location
+        const matchingRoutes = routeData.filter(function(route) {
+
+            return route.from_location === selectedFrom;
+
+        });
+
+
+        // Add available destinations
+        matchingRoutes.forEach(function(route) {
+
+            const option = document.createElement('option');
+
+            option.value = route.to_location;
+            option.textContent = route.to_location;
+
+            toLocation.appendChild(option);
+
+        });
+
+
+        // Enable To dropdown
+        toLocation.disabled = false;
+
+    });
+
+
+    toLocation.addEventListener('change', function () {
+
+        if (this.value) {
+
+            findRouteBtn.disabled = false;
+
+        } else {
+
+            findRouteBtn.disabled = true;
+
+        }
+
+    });
+    findRouteBtn.addEventListener('click', function () {
+
+    const selectedFrom = fromLocation.value;
+    const selectedTo = toLocation.value;
+
+    const routeCards = document.querySelectorAll('.route-card');
+
+    routeCards.forEach(function(card) {
+
+        const cardFrom = card.dataset.from;
+        const cardTo = card.dataset.to;
+
+        if (
+            cardFrom === selectedFrom &&
+            cardTo === selectedTo
+        ) {
+
+            card.style.display = 'block';
+
+        } else {
+
+            card.style.display = 'none';
+
+        }
+
+    });
+
+});
+</script>
+
+<script>
+
+    const routes = JSON.parse(
+        document.getElementById('routes-data').textContent
+    );
+
+    const map = L.map('routeMap').setView(
+        [28.3949, 84.1240],
+        7
+    );
+
+
+    L.tileLayer(
+        'https://tile.openstreetmap.de/{z}/{x}/{y}.png',
+        {
+            attribution: '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(map);
+
+
+    routes.forEach(function(route) {
+
+        const fromPoint = [
+            route.fields.from_latitude,
+            route.fields.from_longitude
+        ];
+
+        const toPoint = [
+            route.fields.to_latitude,
+            route.fields.to_longitude
+        ];
+
+
+        L.marker(fromPoint)
+            .addTo(map)
+            .bindPopup(
+                '<strong>' +
+                route.fields.from_location +
+                '</strong><br>Start of route'
+            );
+
+
+        L.marker(toPoint)
+            .addTo(map)
+            .bindPopup(
+                '<strong>' +
+                route.fields.to_location +
+                '</strong><br>End of route'
+            );
+
+
+        L.polyline(
+            [
+                fromPoint,
+                toPoint
+            ],
+            {
+                weight: 4
+            }
+        )
+        .addTo(map)
+        .bindPopup(
+            '<strong>' +
+            route.fields.from_location +
+            ' → ' +
+            route.fields.to_location +
+            '</strong><br>' +
+            route.fields.transport_type +
+            '<br>' +
+            route.fields.distance
+        );
+
+    });
+
+</script>
+
+{% endblock %}

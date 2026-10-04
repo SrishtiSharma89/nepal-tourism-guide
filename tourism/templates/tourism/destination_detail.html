@@ -1,0 +1,528 @@
+{% extends 'tourism/base.html' %}
+
+{% block title %}
+{{ destination.name }} - Explore Nepal
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <!-- Destination Header -->
+        <div class="mb-5">
+
+            <div class="destination-hero mb-5">
+
+                {% if destination.image %}
+
+                    <img
+                        src="{{ destination.image.url }}"
+                        alt="{{ destination.name }}"
+                    >
+
+                    <div class="destination-hero-overlay">
+
+                        <h1>
+                            📍 {{ destination.name }}
+                        </h1>
+
+                        <p>
+                            {{ destination.district.name }}, Nepal
+                        </p>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="destination-no-image">
+
+                        <h1>
+                            📍 {{ destination.name }}
+                        </h1>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <p class="lead text-muted mb-4">
+                {{ destination.description }}
+            </p>
+            <p>
+                <strong>Best Time to Visit:</strong>
+                {{ destination.best_time }}
+            </p>
+            <div class="text-center mt-3">
+
+    {% if user.is_authenticated %}
+
+        {% if is_favorite %}
+
+            <a
+                href="{% url 'toggle_favorite' destination.id %}"
+                class="btn btn-danger"
+            >
+                ❤️ Remove from Favorites
+            </a>
+
+        {% else %}
+
+            <a
+                href="{% url 'toggle_favorite' destination.id %}"
+                class="btn btn-outline-danger"
+            >
+                🤍 Add to Favorites
+            </a>
+
+        {% endif %}
+
+    {% else %}
+
+        <a
+            href="{% url 'login' %}?next={% url 'destination_detail' destination.id %}"
+            class="btn btn-outline-danger"
+        >
+            🤍 Login to Add Favorite
+        </a>
+
+    {% endif %}
+
+</div>
+
+        </div>
+
+
+        <!-- Destination Information + Map -->
+        <div class="row g-4 mb-5">
+
+            <!-- Information -->
+            <div class="col-lg-5">
+
+                <div class="card shadow-sm h-100 destination-info-card">
+
+                    <div class="card-body p-4">
+
+                        <h3 class="mb-4">
+                            ℹ️ Destination Information
+                        </h3>
+
+                        <div class="info-item">
+                            <span>📍 District</span>
+                            <strong>{{ destination.district.name }}</strong>
+                        </div>
+
+                        <div class="info-item">
+                            <span>🗺️ Province</span>
+                            <strong>{{ destination.district.province }}</strong>
+                        </div>
+
+                        <div class="info-item">
+                            <span>🌤️ Best Time</span>
+                            <strong>{{ destination.best_time }}</strong>
+                        </div>
+
+                        <div class="info-item">
+                            <span>🌐 Latitude</span>
+                            <strong>{{ destination.latitude }}</strong>
+                        </div>
+
+                        <div class="info-item">
+                            <span>🌐 Longitude</span>
+                            <strong>{{ destination.longitude }}</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Map -->
+            <div class="col-lg-7">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-body">
+
+                        <h3 class="mb-3">
+                            🗺️ Location
+                        </h3>
+
+                        <div
+                            id="map"
+                            style="height: 400px;"
+                            data-latitude="{{ destination.latitude }}"
+                            data-longitude="{{ destination.longitude }}"
+                            data-name="{{ destination.name|escape }}"
+                        ></div>
+                        <div class="text-center mt-3">
+
+                            <a
+                                href="https://www.google.com/maps/search/?api=1&query={{ destination.latitude }},{{ destination.longitude }}"
+                                target="_blank"
+                                class="btn btn-success"
+                            >
+                                🗺️ Get Directions
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Leaflet -->
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        >
+
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        
+
+        <script>
+
+            const mapElement = document.getElementById('map');
+
+            const mapLatitude =
+                Number.parseFloat(mapElement.dataset.latitude);
+
+            const mapLongitude =
+                Number.parseFloat(mapElement.dataset.longitude);
+
+            const mapName =
+                mapElement.dataset.name;
+
+
+            // Create map
+            const map = L.map('map').setView(
+                [mapLatitude, mapLongitude],
+                13
+            );
+
+
+            // OpenStreetMap
+            L.tileLayer(
+                'https://tile.openstreetmap.de/{z}/{x}/{y}.png',
+                {
+                    attribution:
+                        '&copy; OpenStreetMap contributors'
+                }
+            ).addTo(map);
+
+
+            // Destination marker
+            L.marker([mapLatitude, mapLongitude])
+                .addTo(map)
+                .bindPopup(
+                    `<b>📍 ${mapName}</b>`
+                )
+                .openPopup();
+
+
+            // Hotel markers
+            const hotels = JSON.parse('[{% for hotel in hotels %}{"name":"{{ hotel.name|escapejs }}","address":"{{ hotel.address|escapejs }}","latitude":{{ hotel.latitude|default:"null" }},"longitude":{{ hotel.longitude|default:"null" }}}{% if not forloop.last %},{% endif %}{% endfor %}]');
+
+
+            // Add hotel markers
+            hotels.forEach(function(hotel) {
+
+                L.marker([
+                    hotel.latitude,
+                    hotel.longitude
+                ])
+                .addTo(map)
+                .bindPopup(
+                    `<b>🏨 ${hotel.name}</b><br>
+                    ${hotel.address}`
+                );
+
+            });
+
+        </script>
+
+
+        <div id="hotel-data" hidden>
+            {% for hotel in hotels %}
+                <span
+                    data-hotel
+                    data-latitude="{{ hotel.latitude }}"
+                    data-longitude="{{ hotel.longitude }}"
+                    data-name="{{ hotel.name|escape }}"
+                    data-address="{{ hotel.address|escape }}"
+                ></span>
+            {% endfor %}
+        </div>
+
+        <!-- Hotels -->
+        <div class="mt-5">
+
+            <h2 class="mb-4">
+                🏨 Nearby Hotels
+            </h2>
+
+
+            <div class="row g-4">
+
+                {% for hotel in hotels %}
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card h-100 shadow-sm hotel-card">
+
+                        {% if hotel.image %}
+                            <img
+                                src="{{ hotel.image.url }}"
+                                class="hotel-image"
+                                alt="{{ hotel.name }}"
+                            >
+                        {% endif %}
+
+                        <div class="card-body p-4">
+
+                            <h4 class="card-title fw-bold">
+                                🏨 {{ hotel.name }}
+                            </h4>
+
+                            <p class="text-muted mb-3">
+                                📍 {{ hotel.address }}
+                            </p>
+
+                            <p>
+                                {{ hotel.description }}
+                            </p>
+
+                            <div class="hotel-details">
+
+                                <p>
+                                    <strong>💰 Price:</strong>
+                                    {{ hotel.price_range }}
+                                </p>
+
+                                <p>
+                                    <strong>📞 Phone:</strong>
+                                    {{ hotel.phone }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="col-12">
+
+                    <p class="text-muted">
+                        No hotels available for this destination yet.
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- Reviews -->
+
+        <div class="mt-5">
+
+            <h2 class="mb-4">
+                ⭐ Reviews
+            </h2>
+
+
+            {% if user.is_authenticated %}
+
+                <div class="card shadow-sm mb-5">
+
+                    <div class="card-body p-4">
+
+                        <h4 class="mb-4">
+                            Leave a Review
+                        </h4>
+
+                        <form
+                            method="post"
+                            action="{% url 'add_review' destination.id %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Rating
+                                </label>
+
+                                <select
+                                    name="rating"
+                                    class="form-select"
+                                    required
+                                >
+                                    <option value="">
+                                        Choose a rating
+                                    </option>
+
+                                    <option value="5">
+                                        ⭐⭐⭐⭐⭐ 5 - Excellent
+                                    </option>
+
+                                    <option value="4">
+                                        ⭐⭐⭐⭐ 4 - Very Good
+                                    </option>
+
+                                    <option value="3">
+                                        ⭐⭐⭐ 3 - Good
+                                    </option>
+
+                                    <option value="2">
+                                        ⭐⭐ 2 - Average
+                                    </option>
+
+                                    <option value="1">
+                                        ⭐ 1 - Poor
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Your Review
+                                </label>
+
+                                <textarea
+                                    name="comment"
+                                    class="form-control"
+                                    rows="4"
+                                    placeholder="Share your experience..."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                            >
+                                ⭐ Submit Review
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info">
+
+                    🔐 Please
+                    <a href="{% url 'login' %}">
+                        login
+                    </a>
+                    to write a review.
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- Existing Reviews -->
+
+            <div class="row g-4">
+
+                {% for review in reviews %}
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 shadow-sm">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold">
+                                👤 {{ review.user.username }}
+                            </h5>
+
+                            <p class="mb-2">
+                                {% if review.rating >= 5 %}
+                                    ⭐⭐⭐⭐⭐
+                                {% elif review.rating >= 4 %}
+                                    ⭐⭐⭐⭐
+                                {% elif review.rating >= 3 %}
+                                    ⭐⭐⭐
+                                {% elif review.rating >= 2 %}
+                                    ⭐⭐
+                                {% else %}
+                                    ⭐
+                                {% endif %}
+                            </p>
+
+                            <p>
+                                {{ review.comment }}
+                            </p>
+
+                            <small class="text-muted">
+                                {{ review.created_at|date:"F d, Y" }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="col-12">
+
+                    <p class="text-muted">
+                        No reviews yet. Be the first to review this destination! ⭐
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-5">
+
+            <a
+                href="{% url 'district_detail' destination.district.id %}"
+                class="btn btn-outline-success"
+            >
+                ← Back to {{ destination.district.name }}
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
