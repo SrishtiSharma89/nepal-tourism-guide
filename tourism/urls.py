@@ -1,47 +1,65 @@
 from django.urls import path
 from . import views
-from .views import home, districts
+
 urlpatterns = [
-    path('', home, name='home'),
-    path('districts/', districts, name='districts'),
+
+    path(
+        '',
+        views.HomeView.as_view(),
+        name='home'
+    ),
+
+    path(
+        'districts/',
+        views.DistrictListView.as_view(),
+        name='districts'
+    ),
+
     path(
         'district/<int:district_id>/',
-        views.district_detail,
+        views.DistrictDetailView.as_view(),
         name='district_detail'
     ),
+
     path(
         'destination/<int:destination_id>/',
-        views.destination_detail,
+        views.DestinationDetailView.as_view(),
         name='destination_detail'
     ),
+
     path(
         'travel-routes/',
-        views.travel_routes,
+        views.TravelRoutesView.as_view(),
         name='travel_routes'
     ),
+
     path(
         'favorite/<int:destination_id>/',
-        views.toggle_favorite,
+        views.ToggleFavoriteView.as_view(),
         name='toggle_favorite'
     ),
+
     path(
         'favorites/',
-        views.my_favorites,
+        views.MyFavoritesView.as_view(),
         name='my_favorites'
     ),
+
     path(
         'signup/',
-        views.signup,
+        views.SignupView.as_view(),
         name='signup'
     ),
+
     path(
         'review/<int:destination_id>/',
-        views.add_review,
+        views.AddReviewView.as_view(),
         name='add_review'
     ),
+
     path(
         'hotels/',
-        views.hotels,
+        views.HotelListView.as_view(),
         name='hotels'
     ),
 ]
