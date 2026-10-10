@@ -1,57 +1,236 @@
+
 {% extends 'tourism/base.html' %}
 
-{% block title %}
-Login - Explore Nepal
-{% endblock %}
+{% block title %}Login | Explore Nepal{% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<style>
+    /* Login page layout */
+    .login-page {
+        min-height: 75vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 45px 16px;
+        background: #f3f8f2;
+    }
 
-    <div class="row justify-content-center">
+    /* Login card */
+    .login-card {
+        width: 100%;
+        max-width: 440px;
+        background: #ffffff;
+        border: 1px solid #e0eadd;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(39, 83, 43, 0.10);
+    }
 
-        <div class="col-md-6 col-lg-5">
+    /* Card heading */
+    .login-header {
+        text-align: center;
+        padding: 32px 28px 12px;
+    }
 
-            <div class="card shadow-sm">
+    .login-icon {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: #eaf4e7;
+        font-size: 34px;
+    }
 
-                <div class="card-body p-4">
+    .login-header h2 {
+        color: #198754;
+        font-size: 27px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
 
-                    <h2 class="text-center mb-4">
-                        🔐 Login
-                    </h2>
+    .login-header p {
+        color: #718071;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
 
-                    <form method="post">
+    /* Form section */
+    .login-body {
+        padding: 24px 32px 32px;
+    }
 
-                        {% csrf_token %}
+    .login-form p {
+        margin-bottom: 20px;
+    }
 
-                        {{ form.as_p }}
+    .login-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: #344b37;
+        font-size: 14px;
+        font-weight: 600;
+    }
 
-                        <button
-                            type="submit"
-                            class="btn btn-success w-100"
-                        >
-                            Login
-                        </button>
-                        <p class="text-center mt-4 mb-0">
+    .login-form input[type="text"],
+    .login-form input[type="password"],
+    .login-form input[type="email"] {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border: 1px solid #d5e2d2;
+        border-radius: 9px;
+        background: #fcfefb;
+        color: #198754;
+        font-size: 15px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
 
-                            Don't have an account?
+    .login-form input:focus {
+        outline: none;
+        border-color: #198754;
+        box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.13);
+    }
 
-                            <a href="{% url 'signup' %}">
-                                Sign Up here
-                            </a>
+    .login-form ul.errorlist {
+        padding-left: 18px;
+        margin: 7px 0 0;
+        color: #c62828;
+        font-size: 13px;
+    }
 
-                        </p>
+    .login-form .helptext {
+        display: block;
+        margin-top: 6px;
+        color: #788578;
+        font-size: 12px;
+    }
 
-                    </form>
+    /* Login button */
+    .login-button {
+        display: block;
+        width: 100%;
+        margin-top: 8px;
+        padding: 13px 16px;
+        border: none;
+        border-radius: 9px;
+        background: #198754;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+    }
 
-                </div>
+    .login-button:hover {
+        background: #156532 ;
+        transform: translateY(-1px);
+    }
 
-            </div>
+    .login-button:focus-visible {
+        outline: 3px solid #a5d6a7;
+        outline-offset: 3px;
+    }
 
+    /* Signup link */
+    .login-signup {
+        margin: 24px 0 0;
+        text-align: center;
+        color: #6b7c6b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .login-signup a {
+        color: #198754;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .login-signup a:hover {
+        color: #156532 ;
+        text-decoration: underline;
+    }
+
+    /* Django messages */
+    .login-message {
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    /* Mobile layout */
+    @media (max-width: 480px) {
+        .login-page {
+            min-height: 70vh;
+            padding: 30px 16px;
+        }
+
+        .login-header {
+            padding: 26px 20px 10px;
+        }
+
+        .login-header h2 {
+            font-size: 24px;
+        }
+
+        .login-body {
+            padding: 22px;
+        }
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-card">
+
+        <div class="login-header">
+            <div class="login-icon">🏔️</div>
+
+            <h2>Welcome Back!</h2>
+
+            <p>
+                Your next adventure in Nepal awaits.
+                Log in to continue exploring.
+            </p>
         </div>
 
-    </div>
+        <div class="login-body">
 
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} login-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="login-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger login-message">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                {{ form.as_p }}
+
+                <button type="submit" class="login-button">
+                    Log In
+                </button>
+            </form>
+
+            <p class="login-signup">
+                Don't have an account?
+                <a href="{% url 'signup' %}">Create an account</a>
+            </p>
+
+        </div>
+    </div>
 </div>
 
 {% endblock %}
