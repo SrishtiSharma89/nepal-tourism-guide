@@ -141,6 +141,38 @@ nepal-tourism-guide/
 │
 └── .gitignore
 ```
+## 📸 Screenshots
+
+Explore the main features of the Nepal Tourism Guide.
+
+### 🏠 Home Page
+
+![Home Page](screenshots/homepage.png)
+
+### 🗺️ Explore Districts
+
+![Districts Page](screenshots/districts.png)
+
+### 🏔️ Destinations in Mustang
+
+![Mustang Destinations](screenshots/mustang-destinations.png)
+
+### 📍 Destination Details — Muktinath
+
+![Muktinath Details](screenshots/muktinath-details.png)
+
+### 🚌 Travel Route Planner — Kathmandu to Pokhara
+
+![Kathmandu to Pokhara Route](screenshots/travel-routes.png)
+
+### ❤️ Favorite Destinations
+
+![Favorites Page](screenshots/favorites.png)
+
+### 🔐 Login Page
+
+![Login Page](screenshots/login.png)
+
 
 ## 🚀 Installation & Setup
 
